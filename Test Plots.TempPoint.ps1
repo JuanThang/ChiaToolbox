@@ -5,38 +5,10 @@ if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
   Break
 }
 
-function Show-MainMenu
-{
-	param (
-		[string]$MM = 'Main Menu'
-	)
-	Clear-Host
-	Write-Host "================ $MM ================"
-	Write-Host "1: Plot Health Check."
-	Write-Host "2: Backup."
-	Write-Host "3: Schedule Backup."
-	Write-Host "4: Restore."
-	Write-Host "Q: Press 'Q' to quit."
-}
-
-function Show-FOBMenu
-{
-	param (
-		[string]$FOB = 'Frequency of Backup'
-	)
-	Clear-Host
-	Write-Host "================ $FOB ================"
-	Write-Host "1: Daily."
-	Write-Host "2: Weekly."
-	Write-Host "3: Monthly."
-	Write-Host "R: Return to the Main Manu."
-}
-
 cd $env:USERPROFILE\Desktop
 
 ##Function source: https://github.com/MrPig91/PSChiaPlotter/blob/main/PSChiaPlotter/Public/Test-ChiaPlot.ps1##
-function Test-ChiaPlot
-{
+function Test-ChiaPlot {
     [CmdletBinding()]
     param(
         [Parameter(ValueFromPipelineByPropertyName,ValueFromPipeline)]
@@ -100,65 +72,25 @@ $env:Path =  $env:Path + "; $chiapath"
 '
 Add-Content -Path $profile.CurrentUserAllHosts -Value $addToProfile
 
-do
-{
-	Show-MainMenu
-	$selection = Read-Host "Please make a selection"
-	switch ($selection)
-	{
-		'1' {
-			Write-Host 'Checking plots may take up to 30s per plot, please be patient whilst this happens in the background'
-			$farm = Read-Host -prompt 'Please enter your farm path'
-			Test-ChiaPlot -Path $farm | Export-Csv -Path .\plotcheck.csv -NoTypeInformation -Append
-			
-			Write-Host 'Installing Excel Module'
-			Install-Module importexcel
-			
-			Write-Host 'Converting .csv to .xlsx'
-			Import-CSV .\plotcheck.csv | Export-Excel .\plotcheck.xlsx
-			
-			Add-Type -AssemblyName PresentationCore, PresentationFramework
-			$ButtonType = [System.Windows.MessageBoxButton]::YesNo
-			$MessageIcon = [System.Windows.MessageBoxImage]::Information
-			$MessageBody = "The checking process has finished"
-			$MessageTitle = "Completed"
-			
-			[System.Windows.MessageBox]::Show($MessageBody, $MessageTitle, $ButtonType, $MessageIcon)
-			
-			Remove-Module PSChiaPlotter
-			Remove-Module importexcel
-		} '2' {
-			Write-Host 'Backing up Chia mainnet database...'
-			Copy-Item	"$env:USERPROFILE\.chia\mainnet\db\blockchain_v1_mainnet.sqlite" -Destination "$env:USERPROFILE\.chia\mainnet\db\blockchain_v1_mainnet.sqlite.bak" -PassThru
-			write-Host	'Backup complete.'
-		} '3' {
-			Show-FOBMenu
-			$selection = Read-Host "Please make a selection"
-			switch ($selection)
-			{
-				'1' {
-					##Daily##
-					
-				} '2' {
-					##Weekly
-					
-				} '3' {
-					##Monthly
-					
-				} '4' {
-					##Return
-				}
-			}
-		} '4' {
-			Write-Host '!! Shutdown your Chia node prior to restoring !!'
-			Read-host 'Press ENTER to continue...'
-			Write-Host 'Restoring Chia mainnet database...'
-			Copy-Item	"$env:USERPROFILE\.chia\mainnet\db\blockchain_v1_mainnet.sqlite.bak" -Destination "$env:USERPROFILE\.chia\mainnet\db\blockchain_v1_mainnet.sqlite" -PassThru
-			Write-Host; 'Restore complete'
-			}
-		}
-pause
-}
-until ($selection -eq 'q')
-		
-	Write-Host "Good Bye"
+Write-Host 'Checking plots may take up to 30s per plot, please be patient whilst this happens in the background'
+$farm = Read-Host -prompt 'Please enter your farm path'
+Test-ChiaPlot -Path $farm | Export-Csv -Path .\plotcheck.csv -NoTypeInformation -Append
+
+Write-Host 'Installing Excel Module'
+Install-Module importexcel
+
+Write-Host 'Converting .csv to .xlsx'
+Import-CSV .\plotcheck.csv | Export-Excel .\plotcheck.xlsx
+
+Add-Type -AssemblyName PresentationCore,PresentationFramework
+$ButtonType = [System.Windows.MessageBoxButton]::YesNo
+$MessageIcon = [System.Windows.MessageBoxImage]::Information
+$MessageBody = "The checking process has finished"
+$MessageTitle = "Completed"
+
+[System.Windows.MessageBox]::Show($MessageBody,$MessageTitle,$ButtonType,$MessageIcon)
+
+Remove-Module PSChiaPlotter
+Remove-Module importexcel
+ 
+Write-Host "Good Bye"
