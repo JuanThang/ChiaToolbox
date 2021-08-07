@@ -134,8 +134,8 @@ do
 			Add-Content -Path "$env:USERPROFILE\.chia\mainnet\db\CTBackupScrpt.ps1" -Value 'Copy-Item "$env:USERPROFILE\.chia\mainnet\db\blockchain_v1_mainnet.sqlite" -Destination "$env:USERPROFILE\.chia\mainnet\db\blockchain_v1_mainnet.sqlite.bak"'
 			$taskname = "Chia Mainnet Backup"
 			$chiamainnetbackup = New-ScheduledTaskAction `
-												  -Execute 'powershell.exe' `
-												  -Argument -File "$env:USERPROFILE\.chia\mainnet\db\CTBackupScrpt.ps1"
+			  -Execute 'powershell.exe' `
+			  -Argument -File "$env:USERPROFILE\.chia\mainnet\db\CTBackupScrpt.ps1"
 			
 			$selection = Read-Host "Please make a selection"
 			switch ($selection)
