@@ -17,7 +17,7 @@ PSChiaPlotter
 
 https://github.com/MrPig91/PSChiaPlotter
 
-Script: https://github.com/MrPig91/PSChiaPlotter/blob/main/PSChiaPlotter/Public/Test-ChiaPlot.ps1
+Function: https://github.com/MrPig91/PSChiaPlotter/blob/main/PSChiaPlotter/Public/Test-ChiaPlot.ps1
 
 ImportExcel
 
