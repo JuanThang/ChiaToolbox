@@ -28,8 +28,6 @@ function Show-FOBMenu
 	Write-Host "================ $FOB ================"
 	Write-Host "1: Daily."
 	Write-Host "2: Weekly."
-	Write-Host "3: Monthly."
-	Write-Host "R: Return to the Main Manu."
 }
 
 cd $env:USERPROFILE\Desktop
@@ -125,7 +123,6 @@ do
 			
 			[System.Windows.MessageBox]::Show($MessageBody, $MessageTitle, $ButtonType, $MessageIcon)
 			
-			Remove-Module PSChiaPlotter
 			Remove-Module importexcel
 		} '2' {
 			Write-Host 'Backing up Chia mainnet database...'
@@ -133,20 +130,29 @@ do
 			write-Host	'Backup complete.'
 		} '3' {
 			Show-FOBMenu
+			Write-Host 'Copying backup script to mainnet folder...'
+			Add-Content -Path "$env:USERPROFILE\.chia\mainnet\db\CTBackupScrpt.ps1" -Value 'Copy-Item "$env:USERPROFILE\.chia\mainnet\db\blockchain_v1_mainnet.sqlite" -Destination "$env:USERPROFILE\.chia\mainnet\db\blockchain_v1_mainnet.sqlite.bak"'
+			$taskname = "Chia Mainnet Backup"
+			$chiamainnetbackup = New-ScheduledTaskAction `
+												  -Execute 'powershell.exe' `
+												  -Argument -File "$env:USERPROFILE\.chia\mainnet\db\CTBackupScrpt.ps1"
+			
 			$selection = Read-Host "Please make a selection"
 			switch ($selection)
 			{
 				'1' {
 					##Daily##
-					
+					$time = Read-Host -prompt 'Please enter the time (HH:MM or 9:30PM):'
+					$interval = Read-Host -prompt 'Please enter the interval (1=Daily 2=Each other day etc):'
+					$tasktrigger = New-ScheduledTaskTrigger -Daily -DaysInterval $interval -At $time
+					Register-ScheduledTask $taskname -Action $chiamainnetbackup -Trigger $tasktrigger -Force
 				} '2' {
 					##Weekly
-					
-				} '3' {
-					##Monthly
-					
-				} '4' {
-					##Return
+					$time = Read-Host -prompt 'Please enter the time (HH:MM or 9:30PM):'
+					$day = Read-Host -prompt 'Please enter the day (Mon, Tue, Wed, Thu, Fri, Sat, Sun):'
+					$interval = Read-Host -prompt 'Please enter the interval (1=Weekly, 2=Fortnightly, 4=3 Weekly 8=4 Weekly):'
+					$tasktrigger = New-ScheduledTaskTrigger -Weekly -WeeksInterval $interval -DaysOfWeek $day -At $time
+					Register-ScheduledTask $taskname -Action $chiamainnetbackup -Trigger $tasktrigger -Force
 				}
 			}
 		} '4' {
