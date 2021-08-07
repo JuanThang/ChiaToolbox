@@ -13,6 +13,7 @@ function Show-MainMenu
 	Clear-Host
 	Write-Host "================ $MM ================"
 	Write-Host "1: Plot Health Check."
+	Write-Host "================ Backup/Restore ================"
 	Write-Host "2: Backup."
 	Write-Host "3: Schedule Backup."
 	Write-Host "4: Restore."
