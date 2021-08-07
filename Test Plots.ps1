@@ -10,7 +10,7 @@ cd $env:USERPROFILE\Desktop
 Write-Host 'Installing PSChiaPlotter'
 #Source#
 #https://github.com/MrPig91/PSChiaPlotter#
-Install-Module -Repository PSGallery -Name PSChiaPlotter -Scope CurrentUser
+Install-Module -Repository PSGallery -Name PSChiaPlotter
 
 Write-Host 'Updating'
 Update-Module PSChiaPlotter
@@ -25,7 +25,7 @@ $farm = Read-Host -prompt 'Please enter your farm path'
 Test-ChiaPlot -Path $farm | Export-Csv -Path .\plotcheck.csv -NoTypeInformation -Append
 
 Write-Host 'Installing Excel Module'
-Install-Module importexcel -Scope CurrentUser
+Install-Module importexcel
 
 Write-Host 'Converting .csv to .xlsx'
 Import-CSV .\plotcheck.csv | Export-Excel .\plotcheck.xlsx
